@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUNAR 30 — Mission Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: INTRO / TITLE
+══════════════════════════════════════════════ -->
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="stars" id="stars"></div>
+    <div class="moon-graphic">
+      <div class="moon-body">
+        <div class="crater c1"></div>
+        <div class="crater c2"></div>
+        <div class="crater c3"></div>
+        <div class="base-structure"></div>
+      </div>
+    </div>
+  </div>
+  <div class="intro-content">
+    <div class="mission-badge">NASA SPACE APPS CHALLENGE 2026</div>
+    <h1 class="game-title">LUNAR<span class="accent">30</span></h1>
+    <p class="game-subtitle">MISSION CONTROL</p>
+    <p class="game-desc">
+      You are Commander of <strong>Artemis Outpost Shackleton</strong> —
+      a four-person research crew on the lunar south pole.
+      Keep your crew alive for <strong>30 simulated hours</strong> (7 mission days)
+      while completing scientific objectives.
+    </p>
+    <div class="stat-pills">
+      <span class="pill">👩‍🚀 Crew of 4</span>
+      <span class="pill">🌙 7 Mission Days</span>
+      <span class="pill">⚗️ NASA Science</span>
+    </div>
+    <button class="btn btn-primary btn-lg" id="btn-start">
+      INITIATE MISSION
+    </button>
+    <button class="btn btn-ghost" id="btn-science-title">
+      📡 SOURCES &amp; SCIENCE
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: BRIEFING
+══════════════════════════════════════════════ -->
+<div id="screen-briefing" class="screen">
+  <div class="briefing-header">
+    <div class="logo-line">
+      <span class="logo-text">LUNAR<span class="accent">30</span></span>
+      <span class="mission-id">MISSION: ART-SHK-2026</span>
+    </div>
+  </div>
+  <div class="briefing-body">
+    <h2>PRE-MISSION BRIEFING</h2>
+    <div class="briefing-grid">
+      <div class="brief-card">
+        <div class="brief-icon">🧑‍🚀</div>
+        <h3>YOUR CREW</h3>
+        <ul>
+          <li><strong>Dr. Yuki Tanaka</strong> — Geologist</li>
+          <li><strong>Lt. Marcus Webb</strong> — Systems Engineer</li>
+          <li><strong>Dr. Priya Nair</strong> — Biologist / Medical</li>
+          <li><strong>Cdr. Alex Rivera</strong> — Commander (you)</li>
+        </ul>
+      </div>
+      <div class="brief-card">
+        <div class="brief-icon">📋</div>
+        <h3>STARTING RESOURCES</h3>
+        <ul>
+          <li>🫁 Oxygen — <strong>80 %</strong></li>
+          <li>💧 Water — <strong>75 %</strong></li>
+          <li>🍱 Food — <strong>90 %</strong></li>
+          <li>⚡ Power — <strong>70 %</strong></li>
+          <li>🛡️ Radiation Shield — <strong>100 %</strong></li>
+        </ul>
+      </div>
+      <div class="brief-card">
+        <div class="brief-icon">🎯</div>
+        <h3>MISSION OBJECTIVES</h3>
+        <ul>
+          <li>Survive all 7 mission days</li>
+          <li>Keep all crew members healthy</li>
+          <li>Complete scientific experiments</li>
+          <li>Manage power from solar arrays</li>
+        </ul>
+      </div>
+      <div class="brief-card nasa-note">
+        <div class="brief-icon">📡</div>
+        <h3>NASA BVAD REV. 2 (TABLE 3-31)</h3>
+        <p>Consumption rates adapted from NASA/TP-2015-218570 Rev. 2
+        (NTRS: 20210024855, Table 3-31). Values below are <em>actual NASA engineering
+        figures</em>; gameplay uses % abstractions.</p>
+        <ul>
+          <li>O₂ consumed: <strong>0.895 kg</strong> / person / day</li>
+          <li>Potable water: <strong>3.217 kg</strong> / person / day</li>
+          <li>Water in food: <strong>0.760 kg</strong> / person / day</li>
+          <li>Food solids (unpackaged): <strong>0.800 kg</strong> / person / day</li>
+          <li>CO₂ load: <strong>1.085 kg</strong> / person / day</li>
+        </ul>
+        <p style="font-size:0.65rem;color:var(--text-dim);margin-top:0.4rem">
+          ⚠️ <em>Distinction:</em> Potable water (3.217 kg) is separate dispensed water for hydration & rehydration. Water in food (0.760 kg) is moisture already present in food. Gameplay "Water" tracks total reserve.
+        </p>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btn-back-intro">← BACK</button>
+      <button class="btn btn-primary" id="btn-begin-mission">BEGIN MISSION →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: GAME (MISSION CONTROL DASHBOARD)
+══════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+
+  <!-- TOP NAV BAR -->
+  <header class="hud-top">
+    <div class="hud-logo">LUNAR<span class="accent">30</span></div>
+    <div class="hud-status">
+      <span class="status-label">MISSION DAY</span>
+      <span class="status-val" id="hud-day">1</span>
+      <span class="status-sep">/</span>
+      <span class="status-max">7</span>
+    </div>
+    <div class="hud-status">
+      <span class="status-label">CREW</span>
+      <span class="status-val" id="hud-crew">4</span>
+      <span class="status-sep">/</span>
+      <span class="status-max">4</span>
+    </div>
+    <div class="hud-status">
+      <span class="status-label">SCORE</span>
+      <span class="status-val" id="hud-score">0</span>
+    </div>
+    <div class="hud-time">
+      <span class="blink-dot"></span> LIVE FEED
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD GRID -->
+  <div class="dashboard">
+
+    <!-- LEFT COLUMN: Resources -->
+    <aside class="panel panel-resources">
+      <h2 class="panel-title">⚙️ LIFE SUPPORT</h2>
+
+      <div class="resource-block">
+        <div class="res-label">
+          <span class="res-icon">🫁</span>
+          <span>OXYGEN</span>
+          <span class="res-pct" id="pct-oxygen">80%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fill-oxygen" id="bar-oxygen" style="width:80%"></div>
+        </div>
+        <div class="res-note" id="note-oxygen">O₂ supply nominal</div>
+      </div>
+
+      <div class="resource-block">
+        <div class="res-label">
+          <span class="res-icon">💧</span>
+          <span>WATER</span>
+          <span class="res-pct" id="pct-water">75%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fill-water" id="bar-water" style="width:75%"></div>
+        </div>
+        <div class="res-note" id="note-water">Water recycler running</div>
+      </div>
+
+      <div class="resource-block">
+        <div class="res-label">
+          <span class="res-icon">🍱</span>
+          <span>FOOD</span>
+          <span class="res-pct" id="pct-food">90%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fill-food" id="bar-food" style="width:90%"></div>
+        </div>
+        <div class="res-note" id="note-food">Rations adequate</div>
+      </div>
+
+      <div class="resource-block">
+        <div class="res-label">
+          <span class="res-icon">⚡</span>
+          <span>POWER</span>
+          <span class="res-pct" id="pct-power">70%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fill-power" id="bar-power" style="width:70%"></div>
+        </div>
+        <div class="res-note" id="note-power">Solar arrays nominal</div>
+      </div>
+
+      <div class="resource-block">
+        <div class="res-label">
+          <span class="res-icon">🛡️</span>
+          <span>RADIATION SHIELD</span>
+          <span class="res-pct" id="pct-rad">100%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill fill-rad" id="bar-rad" style="width:100%"></div>
+        </div>
+        <div class="res-note" id="note-rad">Regolith shielding intact</div>
+      </div>
+
+      <!-- Crew health -->
+      <h2 class="panel-title" style="margin-top:1.5rem">👩‍🚀 CREW STATUS</h2>
+      <div id="crew-panel"></div>
+    </aside>
+
+    <!-- CENTER COLUMN: Event & Log -->
+    <main class="panel panel-event">
+      <div class="event-header">
+        <span class="event-day-badge" id="event-day-badge">DAY 1</span>
+        <span class="event-category" id="event-category">MISSION START</span>
+      </div>
+      <div class="event-art" id="event-art">
+        <div class="art-default"></div>
+      </div>
+      <h3 class="event-title" id="event-title">Systems Check</h3>
+      <p class="event-desc" id="event-desc">
+        Outpost Shackleton is online. All systems nominal. Your crew is ready.
+        Choose your first command.
+      </p>
+      <div class="science-tag" id="science-tag" style="display:none"></div>
+      <div class="choices" id="choices-container"></div>
+
+      <!-- Mission log -->
+      <div class="log-section">
+        <h4 class="log-title">📡 MISSION LOG</h4>
+        <div class="log-feed" id="log-feed"></div>
+      </div>
+    </main>
+
+    <!-- RIGHT COLUMN: Outpost + Discoveries -->
+    <aside class="panel panel-right">
+      <h2 class="panel-title">🌙 OUTPOST MAP</h2>
+      <div class="outpost-art">
+        <div class="lunar-surface">
+          <div class="hab-module" id="hab-status">HAB</div>
+          <div class="solar-array" id="solar-status">☀️</div>
+          <div class="science-lab" id="lab-status">LAB</div>
+          <div class="antenna" id="ant-status">📡</div>
+          <div class="surface-line"></div>
+        </div>
+        <div class="earth-view">🌍</div>
+      </div>
+
+      <h2 class="panel-title" style="margin-top:1.2rem">🔬 DISCOVERIES</h2>
+      <div class="discoveries-list" id="discoveries-list">
+        <p class="no-disc">No discoveries yet — explore to unlock!</p>
+      </div>
+
+      <h2 class="panel-title" style="margin-top:1.2rem">📊 OBJECTIVES</h2>
+      <div class="objectives-list" id="objectives-list"></div>
+
+      <h2 class="panel-title" style="margin-top:1.2rem">🛰️ SPACE WEATHER</h2>
+      <div class="intel-panel" id="intel-panel">
+        <div class="intel-loading" id="intel-loading">
+          <span class="blink-dot"></span> Fetching NASA DONKI data…
+        </div>
+        <div id="intel-content" style="display:none"></div>
+      </div>
+    </aside>
+  </div><!-- end dashboard -->
+</div><!-- end screen-game -->
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: END / MISSION REPORT
+══════════════════════════════════════════════ -->
+<div id="screen-end" class="screen">
+  <div class="end-wrap">
+    <div class="end-badge" id="end-badge">🏆</div>
+    <h1 id="end-headline">MISSION COMPLETE</h1>
+    <p id="end-subline">Artemis Outpost Shackleton — After-Action Report</p>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <span class="rcard-label">FINAL SCORE</span>
+        <span class="rcard-val" id="report-score">0</span>
+      </div>
+      <div class="report-card">
+        <span class="rcard-label">CREW SURVIVED</span>
+        <span class="rcard-val" id="report-crew">0 / 4</span>
+      </div>
+      <div class="report-card">
+        <span class="rcard-label">DAYS SURVIVED</span>
+        <span class="rcard-val" id="report-days">0 / 7</span>
+      </div>
+      <div class="report-card">
+        <span class="rcard-label">DISCOVERIES</span>
+        <span class="rcard-val" id="report-disc">0</span>
+      </div>
+    </div>
+
+    <div class="rating-block">
+      <div class="rating-label">MISSION RATING</div>
+      <div class="rating-stars" id="rating-stars">★★★★★</div>
+      <div class="rating-desc" id="rating-desc">Outstanding Commander</div>
+    </div>
+
+    <div class="discoveries-report" id="end-discoveries"></div>
+    <div class="mission-log-report">
+      <h3>MISSION DEBRIEF</h3>
+      <div id="end-log"></div>
+    </div>
+
+    <div class="btn-row" style="margin-top:2rem">
+      <button class="btn btn-ghost" id="btn-science-end">📡 SOURCES &amp; SCIENCE</button>
+      <button class="btn btn-primary btn-lg" id="btn-restart">🚀 NEW MISSION</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: SOURCES & SCIENCE
+══════════════════════════════════════════════ -->
+<div id="modal-science" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>📡 SOURCES &amp; SCIENCE</span>
+      <button class="modal-close" id="btn-close-science">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="science-section">
+        <h3>🔵 1 — Actual NASA Observations</h3>
+        <ul>
+          <li>
+            <strong>Water Ice at Lunar South Pole</strong><br/>
+            Confirmed by NASA's LCROSS impactor (2009): the Centaur rocket strike in Cabeus crater ejected a water-ice plume, detected by the LCROSS shepherding spacecraft. Mini-RF radar aboard LRO confirmed additional ice deposits.<br/>
+            <a href="https://www.nasa.gov/mission/lcross/" target="_blank" rel="noopener">NASA LCROSS Mission →</a>
+          </li>
+          <li>
+            <strong>Apollo Moonquake Records</strong><br/>
+            Apollo seismometers (1969–1977) recorded over 10,000 moonquakes. Shallow moonquakes can exceed magnitude 5.5 and persist for over 10 minutes — the rigid, dry interior has minimal damping. No confirmed active lunar volcanism in historic times.<br/>
+            <a href="https://science.nasa.gov/solar-system/the-moon/moonquakes/" target="_blank" rel="noopener">NASA Moonquakes →</a>
+          </li>
+          <li>
+            <strong>DONKI Space-Weather Events</strong><br/>
+            The Mission Intelligence panel attempts to load <em>actual recent solar flare (FLR) and solar energetic particle (SEP) records</em> from the NASA DONKI API in real time. If online, records are labelled ACTUAL NASA DATA. Offline play uses SIMULATED SCENARIO labels.<br/>
+            <a href="https://kauai.ccmc.gsfc.nasa.gov/DONKI/" target="_blank" rel="noopener">NASA DONKI Portal →</a> |
+            <a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA Open APIs →</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="science-section">
+        <h3>🟣 2 — NASA Engineering Reference Values (BVAD Table 3-31)</h3>
+        <p>
+          Source: <strong>NASA/TP-2015-218570 Rev. 2 (February 2022)</strong>,
+          "Life Support Baseline Values and Assumptions Document", NTRS ID: 20210024855,
+          specifically <strong>Table 3-31 (Exploration Life Support Baseline Mass Balance)</strong>.
+          These represent authentic NASA engineering planning parameters:
+        </p>
+        <ul>
+          <li><strong>Oxygen consumed:</strong> 0.895 kg / crewmember-day
+            — based on standard metabolic workload.</li>
+          <li><strong>Potable water content:</strong> 3.217 kg / crewmember-day
+            — dedicated clean water supplied for crew direct drinking and meal preparation.</li>
+          <li><strong>Water in food (before rehydration):</strong> 0.760 kg / crewmember-day
+            — inherent moisture already contained in the pre-packaged food matrix.</li>
+          <li><strong>Food solids (without packaging):</strong> 0.800 kg / crewmember-day
+            — actual anhydrous nutrient mass (excluding packaging and inherent moisture).</li>
+          <li><strong>Carbon dioxide load:</strong> 1.085 kg / crewmember-day
+            — metabolic byproduct requiring continuous removal by ECLSS CDRA/scrubbers.</li>
+        </ul>
+        <p style="font-size:0.75rem;color:var(--amber)">
+          ⚠️ <strong>Scientific Distinction:</strong> "Potable water" (3.217 kg) and "Water in food" (0.760 kg) are distinct mass streams in ECLSS engineering. Potable water must be dispensed from life-support tanks, whereas moisture in food is consumed directly with rations. In this simulator, resource meters represent total available reserves for accessible educational gameplay.
+        </p>
+        <a href="https://ntrs.nasa.gov/citations/20210024855" target="_blank" rel="noopener">
+          NASA NTRS — BVAD Rev. 2 (2022) →
+        </a>
+      </div>
+
+      <div class="science-section">
+        <h3>🟡 3 — Simplified Gameplay Parameters</h3>
+        <p>The following are intentional game-design simplifications. They are not NASA data.</p>
+        <ul>
+          <li>All five resources are shown as <em>percentage of total supply</em>, not physical units (kg, Wh, Pa).</li>
+          <li>The "Water" bar represents total water budget (drinking + food rehydration), not just drinking water.</li>
+          <li>The "Food" bar represents dry-mass food store; rehydration water is not separately tracked.</li>
+          <li>Crew health is abstracted to four states: Healthy / Fatigued / Critical / Incapacitated.</li>
+          <li>Power generation ignores the real 14-day lunar day/night cycle (simplified to 7 game days).</li>
+          <li>Water recycling efficiency is fixed; real ECLSS CHX and WRS efficiency varies with load and maintenance.</li>
+          <li>Radiation doses are advisory only. No cumulative dose model (Gy or Sv) is implemented.</li>
+          <li>RTG power output is instantaneous in the game; real RTGs degrade slowly over years.</li>
+        </ul>
+      </div>
+
+      <div class="science-section">
+        <h3>🟠 4 — Fictional Mission Events</h3>
+        <p>The following scenario elements are entirely fictional and do not represent real NASA mission plans or data:</p>
+        <ul>
+          <li>Artemis Outpost Shackleton, crew roster, and mission designation ART-SHK-2026.</li>
+          <li>The specific Day 1–7 event sequence and decision trees.</li>
+          <li>Exact resource impacts of each player choice (tuned for gameplay balance).</li>
+          <li>The "discovery" items unlocked during gameplay.</li>
+        </ul>
+      </div>
+
+      <div class="science-section">
+        <h3>📚 Additional References</h3>
+        <ul>
+          <li><a href="https://ntrs.nasa.gov/citations/20210024855" target="_blank" rel="noopener">NASA BVAD Rev. 2 (2022) — NTRS 20210024855 →</a></li>
+          <li><a href="https://www.nasa.gov/centers-and-facilities/glenn/eclss/" target="_blank" rel="noopener">Environmental Control and Life Support System (ECLSS) →</a></li>
+          <li><a href="https://science.nasa.gov/solar-system/the-moon/" target="_blank" rel="noopener">NASA Moon Science →</a></li>
+          <li><a href="https://www.nasa.gov/feature/space-radiation-and-human-spaceflight" target="_blank" rel="noopener">NASA Space Radiation and Human Spaceflight →</a></li>
+          <li><a href="https://www.nasa.gov/humans-in-space/artemis/" target="_blank" rel="noopener">NASA Artemis Program →</a></li>
+          <li><a href="https://spaceappschallenge.org/" target="_blank" rel="noopener">NASA Space Apps Challenge →</a></li>
+        </ul>
+      </div>
+
+      <p class="disclaimer">
+        ⚠️ <strong>DISCLAIMER:</strong> LUNAR 30 is an independent educational game created for the NASA Space Apps Challenge 2026.
+        It is not an official NASA product and does not imply NASA endorsement.
+        Scientific data has been simplified for educational gameplay purposes.
+        DONKI data fetched live via the public NASA Open APIs (api.nasa.gov) using the DEMO_KEY rate tier.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL: RESULT NOTIFICATION (resource critical)
+══════════════════════════════════════════════ -->
+<div id="modal-alert" class="modal-overlay" style="display:none">
+  <div class="modal-box modal-alert-box">
+    <div class="alert-icon" id="alert-icon">⚠️</div>
+    <h2 id="alert-title">WARNING</h2>
+    <p id="alert-body">Critical resource level detected.</p>
+    <button class="btn btn-primary" id="btn-close-alert">ACKNOWLEDGE</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
